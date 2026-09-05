@@ -1,0 +1,366 @@
+/* ==========================================
+   Royal Sapphire & Pearl Theme - Core CSS
+   ========================================== */
+
+:root {
+    --primary-blue: #0F2C59;
+    --accent-teal: #337357;
+    --bg-ice-pearl: #F4F6F9;
+    --surface-white: #FFFFFF;
+    --text-charcoal: #1E293B;
+    --transition-speed: 0.3s ease;
+}
+
+/* Global Resets */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background-color: var(--bg-ice-pearl);
+    color: var(--text-charcoal);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    line-height: 1.6;
+}
+
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* ==========================================
+   Header Component Styles
+   ========================================== */
+
+.site-header {
+    background-color: var(--surface-white);
+    border-bottom: 1px solid #E2E8F0;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 4px rgba(15, 44, 89, 0.04);
+}
+
+.nav-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 70px;
+}
+
+.brand-logo {
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+}
+
+.arabic-brand {
+    font-size: 1.6rem;
+    color: var(--primary-blue);
+    font-weight: bold;
+    font-family: 'Amiri', serif, sans-serif;
+    line-height: 1.2;
+}
+
+.sub-brand {
+    font-size: 0.75rem;
+    color: var(--accent-teal);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.nav-links {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+}
+
+.nav-link {
+    text-decoration: none;
+    color: var(--text-charcoal);
+    font-weight: 500;
+    transition: color var(--transition-speed);
+}
+
+.nav-link:hover {
+    color: var(--accent-teal);
+}
+
+.admin-btn {
+    background-color: var(--primary-blue);
+    color: var(--surface-white) !important;
+    padding: 8px 16px;
+    border-radius: 6px;
+    transition: background-color var(--transition-speed);
+}
+
+.admin-btn:hover {
+    background-color: #163d7a;
+}
+
+.menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--primary-blue);
+}
+
+/* ==========================================
+   Main Content Layout
+   ========================================== */
+
+main {
+    flex: 1;
+    padding: 40px 0;
+}
+
+/* ==========================================
+   Footer Component Styles
+   ========================================== */
+
+.site-footer {
+    background-color: var(--primary-blue);
+    color: var(--surface-white);
+    padding: 40px 0 20px;
+    margin-top: auto;
+}
+
+.footer-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+    margin-bottom: 30px;
+}
+
+.arabic-brand-footer {
+    font-size: 1.4rem;
+    font-family: 'Amiri', serif;
+    color: #FFFFFF;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.footer-col p {
+    color: #94A3B8;
+    font-size: 0.9rem;
+}
+
+.footer-col h4 {
+    font-size: 1rem;
+    margin-bottom: 15px;
+    color: #E2E8F0;
+}
+
+.footer-col ul {
+    list-style: none;
+}
+
+.footer-col ul li {
+    margin-bottom: 8px;
+}
+
+.footer-col ul li a {
+    color: #94A3B8;
+    text-decoration: none;
+    transition: color var(--transition-speed);
+}
+
+.footer-col ul li a:hover {
+    color: #FFFFFF;
+}
+
+.footer-bottom {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 20px;
+    text-align: center;
+    font-size: 0.85rem;
+    color: #94A3B8;
+}
+
+/* ==========================================
+    Responsive Media Queries (Mobile & Tablet)
+   ========================================== */
+
+@media (max-width: 768px) {
+    .menu-toggle {
+        display: block;
+    }
+
+    .nav-links {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 70px;
+        left: 0;
+        width: 100%;
+        background-color: var(--surface-white);
+        padding: 20px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        border-bottom: 1px solid #E2E8F0;
+        align-items: flex-start;
+        gap: 16px;
+    }
+
+    .nav-links.active {
+        display: flex;
+    }
+
+    .admin-btn {
+        width: 100%;
+        text-align: center;
+    }
+}
+/* ==========================================
+   Home Page Stacked Layout Styles
+   ========================================== */
+
+.home-content {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    max-width: 800px; /* Keeps the stacked layout centered and readable on laptops */
+}
+
+.home-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.home-tile {
+    background-color: var(--surface-white);
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    text-decoration: none;
+    color: var(--text-charcoal);
+    box-shadow: 0 4px 6px rgba(15, 44, 89, 0.02);
+    transition: transform var(--transition-speed), border-color var(--transition-speed), box-shadow var(--transition-speed);
+}
+
+.home-tile:hover {
+    transform: translateY(-2px);
+    border-color: var(--accent-teal);
+    box-shadow: 0 6px 12px rgba(15, 44, 89, 0.06);
+}
+
+.tile-icon {
+    font-size: 2rem;
+    background-color: var(--bg-ice-pearl);
+    padding: 12px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.tile-body {
+    flex: 1;
+}
+
+.tile-body h3 {
+    font-size: 1.15rem;
+    color: var(--primary-blue);
+    margin: 4px 0;
+}
+
+.tile-body p {
+    font-size: 0.9rem;
+    color: #64748B;
+}
+
+.tile-arrow {
+    font-size: 1.5rem;
+    color: var(--accent-teal);
+    font-weight: bold;
+}
+
+/* Responsive adjustments for mobile */
+@media (max-width: 768px) {
+    .home-tile {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 14px;
+    }
+
+    .home-tile .btn-primary {
+        width: 100%;
+        text-align: center;
+    }
+    
+    .tile-arrow {
+        align-self: flex-end;
+        margin-top: -20px;
+    }
+}
+/* ==========================================
+   Themed Search Bar Styles
+   ========================================== */
+
+.filter-bar {
+    display: flex;
+    background-color: var(--surface-white);
+    padding: 12px 16px;
+    border-radius: 12px;
+    border: 1px solid #E2E8F0;
+    box-shadow: 0 2px 4px rgba(15, 44, 89, 0.02);
+}
+
+.search-box {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    background-color: var(--bg-ice-pearl);
+    border: 1px solid #CBD5E1;
+    border-radius: 8px;
+    padding: 0 14px;
+    transition: border-color var(--transition-speed), box-shadow var(--transition-speed);
+}
+
+.search-box:focus-within {
+    border-color: var(--accent-teal);
+    box-shadow: 0 0 0 3px rgba(51, 115, 87, 0.1);
+    background-color: var(--surface-white);
+}
+
+.search-icon {
+    font-size: 1.1rem;
+    color: var(--primary-blue);
+}
+
+.search-input {
+    width: 100%;
+    padding: 12px 0;
+    border: none;
+    background: transparent;
+    font-size: 0.95rem;
+    color: var(--text-charcoal);
+    outline: none;
+}
+
+.search-input::placeholder {
+    color: #94A3B8;
+}
+
+.no-results {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 40px;
+    color: #64748B;
+    background-color: var(--surface-white);
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+}
