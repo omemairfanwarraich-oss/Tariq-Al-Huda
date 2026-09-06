@@ -7,6 +7,11 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (headerRes.ok) {
                 headerPlaceholder.innerHTML = await headerRes.text();
                 setupMobileMenu(); // Initialize mobile toggle after injection
+                
+                // Trigger auth status check now that the header exists in the DOM
+                if (typeof checkAuthStatus === "function") {
+                    checkAuthStatus();
+                }
             } else {
                 console.error("Failed to load header.html, status:", headerRes.status);
             }

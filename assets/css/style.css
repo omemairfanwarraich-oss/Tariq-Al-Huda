@@ -1,13 +1,15 @@
 /* ==========================================
    Royal Sapphire & Pearl Theme - Core CSS
    ========================================== */
-
+/* Theme Palette: Midnight Green & Rosy Brown */
 :root {
-    --primary-blue: #0F2C59;
-    --accent-teal: #337357;
-    --bg-ice-pearl: #F4F6F9;
-    --surface-white: #FFFFFF;
-    --text-charcoal: #1E293B;
+    --primary-blue: #004953;       /* Midnight Green (Primary dark/brand elements) */
+    --accent-teal: #0b1f22;        /* Deep Dark Slate/Teal Accent */
+    --bg-ice-pearl: #f4f6f7;       /* Soft Light Background Tint */
+    --surface-white: #ffffff;      /* Clean White for Cards & Surfaces */
+    --text-charcoal: #2c3e50;      /* Dark Readable Charcoal Text */
+    --rosy-brown: #bc8f8f;         /* Rosy Brown Accent & Highlights */
+    --rosy-brown-hover: #a57878;   /* Darker Rosy Brown for Hover States */
     --transition-speed: 0.3s ease;
 }
 
@@ -40,12 +42,13 @@ body {
    ========================================== */
 
 .site-header {
-    background-color: var(--surface-white);
-    border-bottom: 1px solid #E2E8F0;
-    position: sticky;
+    background-color: var(--primary-blue);
+    border-bottom: 1px solid rgba(188, 143, 143, 0.2);
+    position: sticky !important;
     top: 0;
     z-index: 1000;
-    box-shadow: 0 2px 4px rgba(15, 44, 89, 0.04);
+    box-shadow: 0 4px 12px rgba(0, 73, 83, 0.15);
+    position: -webkit-sticky !important;
 }
 
 .nav-container {
@@ -63,7 +66,7 @@ body {
 
 .arabic-brand {
     font-size: 1.6rem;
-    color: var(--primary-blue);
+    color: #ffffff;
     font-weight: bold;
     font-family: 'Amiri', serif, sans-serif;
     line-height: 1.2;
@@ -71,9 +74,10 @@ body {
 
 .sub-brand {
     font-size: 0.75rem;
-    color: var(--accent-teal);
+    color: var(--rosy-brown);
     letter-spacing: 0.5px;
     text-transform: uppercase;
+    font-weight: 600;
 }
 
 .nav-links {
@@ -84,25 +88,25 @@ body {
 
 .nav-link {
     text-decoration: none;
-    color: var(--text-charcoal);
+    color: #ffffff;
     font-weight: 500;
     transition: color var(--transition-speed);
 }
 
 .nav-link:hover {
-    color: var(--accent-teal);
+    color: var(--rosy-brown);
 }
 
 .admin-btn {
-    background-color: var(--primary-blue);
-    color: var(--surface-white) !important;
+    background-color: var(--rosy-brown);
+    color: #ffffff !important;
     padding: 8px 16px;
     border-radius: 6px;
     transition: background-color var(--transition-speed);
 }
 
 .admin-btn:hover {
-    background-color: #163d7a;
+    background-color: var(--rosy-brown-hover);
 }
 
 .menu-toggle {
@@ -111,7 +115,7 @@ body {
     border: none;
     font-size: 1.5rem;
     cursor: pointer;
-    color: var(--primary-blue);
+    color: #ffffff;
 }
 
 /* ==========================================
@@ -150,14 +154,14 @@ main {
 }
 
 .footer-col p {
-    color: #94A3B8;
+    color: #cbd5e1;
     font-size: 0.9rem;
 }
 
 .footer-col h4 {
     font-size: 1rem;
     margin-bottom: 15px;
-    color: #E2E8F0;
+    color: var(--rosy-brown);
 }
 
 .footer-col ul {
@@ -169,13 +173,13 @@ main {
 }
 
 .footer-col ul li a {
-    color: #94A3B8;
+    color: #cbd5e1;
     text-decoration: none;
     transition: color var(--transition-speed);
 }
 
 .footer-col ul li a:hover {
-    color: #FFFFFF;
+    color: var(--rosy-brown);
 }
 
 .footer-bottom {
@@ -183,11 +187,11 @@ main {
     padding-top: 20px;
     text-align: center;
     font-size: 0.85rem;
-    color: #94A3B8;
+    color: #cbd5e1;
 }
 
 /* ==========================================
-    Responsive Media Queries (Mobile & Tablet)
+   Responsive Media Queries (Mobile & Tablet)
    ========================================== */
 
 @media (max-width: 768px) {
@@ -202,10 +206,10 @@ main {
         top: 70px;
         left: 0;
         width: 100%;
-        background-color: var(--surface-white);
+        background-color: var(--primary-blue);
         padding: 20px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-        border-bottom: 1px solid #E2E8F0;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+        border-bottom: 1px solid rgba(188, 143, 143, 0.2);
         align-items: flex-start;
         gap: 16px;
     }
@@ -219,6 +223,7 @@ main {
         text-align: center;
     }
 }
+
 /* ==========================================
    Home Page Stacked Layout Styles
    ========================================== */
@@ -227,7 +232,7 @@ main {
     display: flex;
     flex-direction: column;
     gap: 24px;
-    max-width: 800px; /* Keeps the stacked layout centered and readable on laptops */
+    max-width: 800px;
 }
 
 .home-stack {
@@ -238,7 +243,7 @@ main {
 
 .home-tile {
     background-color: var(--surface-white);
-    border: 1px solid #E2E8F0;
+    border: 1px solid rgba(188, 143, 143, 0.3);
     border-radius: 12px;
     padding: 20px 24px;
     display: flex;
@@ -246,19 +251,19 @@ main {
     gap: 20px;
     text-decoration: none;
     color: var(--text-charcoal);
-    box-shadow: 0 4px 6px rgba(15, 44, 89, 0.02);
+    box-shadow: 0 4px 6px rgba(0, 73, 83, 0.02);
     transition: transform var(--transition-speed), border-color var(--transition-speed), box-shadow var(--transition-speed);
 }
 
 .home-tile:hover {
     transform: translateY(-2px);
-    border-color: var(--accent-teal);
-    box-shadow: 0 6px 12px rgba(15, 44, 89, 0.06);
+    border-color: var(--rosy-brown);
+    box-shadow: 0 6px 12px rgba(0, 73, 83, 0.06);
 }
 
 .tile-icon {
     font-size: 2rem;
-    background-color: var(--bg-ice-pearl);
+    background-color: rgba(188, 143, 143, 0.15);
     padding: 12px;
     border-radius: 10px;
     display: flex;
@@ -278,12 +283,12 @@ main {
 
 .tile-body p {
     font-size: 0.9rem;
-    color: #64748B;
+    color: #64748b;
 }
 
 .tile-arrow {
     font-size: 1.5rem;
-    color: var(--accent-teal);
+    color: var(--rosy-brown);
     font-weight: bold;
 }
 
@@ -305,6 +310,7 @@ main {
         margin-top: -20px;
     }
 }
+
 /* ==========================================
    Themed Search Bar Styles
    ========================================== */
@@ -314,8 +320,8 @@ main {
     background-color: var(--surface-white);
     padding: 12px 16px;
     border-radius: 12px;
-    border: 1px solid #E2E8F0;
-    box-shadow: 0 2px 4px rgba(15, 44, 89, 0.02);
+    border: 1px solid rgba(188, 143, 143, 0.3);
+    box-shadow: 0 2px 4px rgba(0, 73, 83, 0.02);
 }
 
 .search-box {
@@ -324,15 +330,15 @@ main {
     gap: 12px;
     width: 100%;
     background-color: var(--bg-ice-pearl);
-    border: 1px solid #CBD5E1;
+    border: 1px solid rgba(188, 143, 143, 0.4);
     border-radius: 8px;
     padding: 0 14px;
     transition: border-color var(--transition-speed), box-shadow var(--transition-speed);
 }
 
 .search-box:focus-within {
-    border-color: var(--accent-teal);
-    box-shadow: 0 0 0 3px rgba(51, 115, 87, 0.1);
+    border-color: var(--rosy-brown);
+    box-shadow: 0 0 0 3px rgba(188, 143, 143, 0.2);
     background-color: var(--surface-white);
 }
 
@@ -352,15 +358,54 @@ main {
 }
 
 .search-input::placeholder {
-    color: #94A3B8;
+    color: #94a3b8;
 }
 
 .no-results {
     grid-column: 1 / -1;
     text-align: center;
     padding: 40px;
-    color: #64748B;
+    color: #64748b;
     background-color: var(--surface-white);
-    border: 1px solid #E2E8F0;
+    border: 1px solid rgba(188, 143, 143, 0.3);
     border-radius: 12px;
+}
+/* Authentication Navbar Button Styles */
+#auth-nav {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-left: 15px;
+}
+
+#auth-nav .auth-btn-login {
+    background-color: transparent;
+    color: var(--primary-color, #0f4c5c);
+    border: 2px solid var(--primary-color, #0f4c5c);
+    padding: 6px 16px;
+    border-radius: 6px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+#auth-nav .auth-btn-login:hover {
+    background-color: var(--primary-color, #0f4c5c);
+    color: #ffffff;
+}
+
+#auth-nav .auth-btn-signup {
+    background-color: var(--primary-color, #0f4c5c);
+    color: #ffffff;
+    border: 2px solid var(--primary-color, #0f4c5c);
+    padding: 6px 16px;
+    border-radius: 6px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+#auth-nav .auth-btn-signup:hover {
+    background-color: #0b3844;
+    border-color: #0b3844;
 }

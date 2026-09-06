@@ -1,72 +1,76 @@
-// Mock data representing documents that will later be fetched from FastAPI and MongoDB
-const mockPdfData = [
-    {
-        id: "sample-1",
-        title: "Introduction to Hadith Sciences",
-        category: "Hadith",
-        upload_date: "2026-09-06",
-        description: "Comprehensive notes covering terminology, classification, and major narrators.",
-        file_url: "#"
-    },
-    {
-        id: "sample-2",
-        title: "Fundamentals of Islamic Jurisprudence",
-        category: "Fiqh",
-        upload_date: "2026-09-04",
-        description: "An accessible overview of Usool al-Fiqh and primary legal sources.",
-        file_url: "#"
-    },
-    {
-        id: "sample-3",
-        title: "Tafseer Notes on Surah Al-Kahf",
-        category: "Tafseer",
-        upload_date: "2026-09-01",
-        description: "Detailed linguistic and thematic commentary on the verses of Surah Al-Kahf.",
-        file_url: "#"
-    }
-];
-
-document.addEventListener("DOMContentLoaded", () => {
-    const pdfGrid = document.getElementById("pdfGrid");
-    const searchInput = document.getElementById("searchInput");
-
-    // Initial render
-    renderPdfs(mockPdfData);
-
-    // Event listener for searching
-    searchInput.addEventListener("input", filterPdfs);
-
-    function renderPdfs(data) {
-        if (data.length === 0) {
-            pdfGrid.innerHTML = `<p class="no-results">No PDF notes found matching your search.</p>`;
+async function loadLibraryPdfs() {
+    try {
+        const response = await fetch('/api/pdfs');
+        if (!response.ok) {
+            throw new Error('Failed to fetch PDFs from the backend.');
+        }
+        
+        const pdfs = await response.json();
+        const container = document.getElementById('pdf-container');
+        
+        if (!container) {
+            console.error('Element with ID "pdf-container" not found in HTML.');
             return;
         }
 
-        pdfGrid.innerHTML = data.map(pdf => `
-            <div class="pdf-card">
-                <div class="pdf-card-header">
-                    <span class="category-badge">${pdf.category}</span>
-                    <span class="date-badge">${pdf.upload_date}</span>
-                </div>
+        container.innerHTML = '';
+
+        if (pdfs.length === 0) {
+            container.innerHTML = '<p style="color: var(--text-muted);">No notes available in the library yet.</p>';
+            return;
+        }
+
+        pdfs.forEach(pdf => {
+            const card = document.createElement('div');
+            card.className = 'pdf-card';
+            card.innerHTML = `
                 <h3>${pdf.title}</h3>
                 <p>${pdf.description}</p>
-                <div class="pdf-card-actions">
-                    <a href="viewer.html?id=${pdf.id}" class="btn-secondary">Read / View</a>
-                    <a href="${pdf.file_url}" class="btn-primary" download>Download PDF</a>
+                <small style="color: var(--text-muted);">Uploaded: ${pdf.upload_date}</small>
+                <div style="margin-top: 15px;">
+                    <a href="viewer.html?id=${pdf.id}" class="view-btn">Read Note</a>
                 </div>
-            </div>
-        `).join("");
+            `;
+            container.appendChild(card);
+        });
+    } catch (error) {
+        console.error('Error loading library notes:', error);
+    }
+}
+
+async function postComment(pdfId, message) {
+    const token = localStorage.getItem("access_token");
+    if (!token) {
+        alert("You must be logged in to comment.");
+        window.location.href = "/login.html";
+        return;
     }
 
-    function filterPdfs() {
-        const searchTerm = searchInput.value.toLowerCase();
-
-        const filtered = mockPdfData.filter(pdf => {
-            return pdf.title.toLowerCase().includes(searchTerm) || 
-                pdf.description.toLowerCase().includes(searchTerm) ||
-                pdf.category.toLowerCase().includes(searchTerm);
+    try {
+        const response = await fetch("/api/discussions", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                pdf_id: pdfId,
+                message: message
+            })
         });
 
-        renderPdfs(filtered);
+        if (response.ok) {
+            // Clear input and reload discussion list if function exists
+            if (typeof loadDiscussions === "function") {
+                loadDiscussions(pdfId);
+            }
+        } else {
+            const err = await response.json();
+            alert(err.detail || "Failed to post comment.");
+        }
+    } catch (err) {
+        console.error("Error posting comment:", err);
     }
-});
+}
+
+document.addEventListener('DOMContentLoaded', loadLibraryPdfs);

@@ -11,11 +11,29 @@ class UserCreate(BaseModel):
     password: str = Field(..., min_length=6)
 
 
+class UserLogin(BaseModel):
+    username: str
+    password: str
+
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+    username: str
+    is_admin: bool
+
+
+class PasswordReset(BaseModel):
+    email: EmailStr
+    new_password: str = Field(..., min_length=6)
+
+
 class UserResponse(BaseModel):
     id: str
     username: str
     email: EmailStr
     joined_date: str
+    is_admin: bool = False
 
     class Config:
         populate_by_name = True
