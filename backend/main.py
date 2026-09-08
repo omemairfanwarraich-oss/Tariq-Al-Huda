@@ -14,8 +14,8 @@ import cloudinary.uploader
 from cloudinary.utils import private_download_url
 from urllib.request import urlopen
 
-from database import test_db_connection, user_collection, pdf_collection, discussion_collection, faq_collection
-from schemas import UserCreate, UserResponse, PDFResponse, DiscussionCreate, DiscussionResponse, UserLogin, Token, PasswordReset, FAQCreate, FAQResponse
+from .database import test_db_connection, user_collection, pdf_collection, discussion_collection, faq_collection
+from .schemas import UserCreate, UserResponse, PDFResponse, DiscussionCreate, DiscussionResponse, UserLogin, Token, PasswordReset, FAQCreate, FAQResponse
 
 app = FastAPI(title="طريق الهدى API")
 
