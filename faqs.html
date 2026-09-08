@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQs & Q&A - طريق الهدى</title>
+    <link rel="stylesheet" href="assets/css/style.css?v=6">
+</head>
+<body>
+    <div id="header-placeholder"></div>
+    <main class="container page-shell faq-page">
+        <a href="index.html" class="back-link">← Back</a>
+        <div class="section-header">
+            <h1>FAQs & Questions</h1>
+            <p style="color: var(--gold-muted);">Browse answered questions or send a focused question to the team.</p>
+        </div>
+        <div class="faq-layout">
+            <section class="">
+                <div class="section-heading-row"><div><span class="eyebrow">ANSWERS</span><h2 style="color: var(--gold-bright);">Frequently asked</h2></div><span id="faq-count" class="discussion-count" style="color: var(--gold-muted);""></span></div>
+                <div id="faq-list" class="faq-list"><p class="empty-state">Loading FAQs...</p></div>
+            </section>
+            <section class="faq-form-panel">
+                <h2 style="color: var(--gold-bright);">ASK A QUESTION</h2>
+                <h2>Send your query</h2>
+                <form id="faq-form" class="stack-form">
+                    <label for="query-type">Query type</label>
+                    <select id="query-type" required style="background: var(--midnight-blue); color: var(--gold-bright); border: 1px solid var(--glass-border); padding: 10px; border-radius: 6px;"><option value="general">General question</option><option value="notes">Question about a note</option><option value="technical">Technical issue</option></select>
+                    <div id="note-reference-wrap" hidden><label for="note-reference">Note name or ID</label><input id="note-reference" maxlength="150" placeholder="Example: Tafsir lesson or 101" style="background: var(--midnight-blue); color: var(--gold-bright); border: 1px solid var(--glass-border);"></div>
+                    <label for="faq-heading">Heading</label><input id="faq-heading" required maxlength="160" placeholder="Summarize your question" style="background: var(--midnight-blue); color: var(--gold-bright); border: 1px solid var(--glass-border);">
+                    <label for="faq-details">Details</label><textarea id="faq-details" required maxlength="2000" rows="6" placeholder="Explain what you would like to know..." style="background: var(--midnight-blue); color: var(--gold-bright); border: 1px solid var(--glass-border);"></textarea>
+                    <button class="button button-primary" type="submit">Submit question <span aria-hidden="true">→</span></button>
+                    <p id="faq-form-status" class="form-hint"></p>
+                </form>
+            </section>
+        </div>
+    </main>
+    <div id="footer-placeholder"></div>
+    <script src="assets/js/component-loader.js"></script><script src="assets/js/auth.js?v=5"></script>
+    <script>
+        const faqList = document.getElementById('faq-list');
+        const queryType = document.getElementById('query-type');
+        queryType.addEventListener('change', () => document.getElementById('note-reference-wrap').hidden = queryType.value !== 'notes');
+        const escapeHtml = value => String(value??'').replace(/[&<>'"]/g, character => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[character]));
+        async function loadFaqs() {
+            const response = await fetch('/api/faqs');
+            const faqs = response.ok ? await response.json() : [];
+            document.getElementById('faq-count').textContent = `${faqs.length} question${faqs.length === 1 ? '' : 's'}`;
+            faqList.innerHTML = faqs.length ? faqs.map(faq => `<details class="faq-item"><summary><span><b>${escapeHtml(faq.heading)}</b><small>${escapeHtml(faq.query_type)}${faq.note_reference ? ` · ${escapeHtml(faq.note_reference)}` : ''}</small></span><span>+</span></summary><div class="faq-answer"><p>${escapeHtml(faq.details)}</p>${faq.answer ? `<div class="faq-reply"><strong>${escapeHtml(faq.answer_by || 'Administrator')} (Admin)</strong><p>${escapeHtml(faq.answer)}</p></div>` : '<p class="form-hint">Awaiting an answer from the team.</p>'}</div></details>`).join('') : '<p class="empty-state">No FAQs yet. Be the first to ask.</p>';
+        }
+        document.getElementById('faq-form').addEventListener('submit', async event => {
+            event.preventDefault();
+            const token = localStorage.getItem('access_token');
+            if (!token) { window.location.href = `login.html?redirect=${encodeURIComponent(location.pathname)}`; return; }
+            const response = await fetch('/api/faqs', {method:'POST', headers:{'Content-Type':'application/json','Authorization':`Bearer ${token}`}, body:JSON.stringify({query_type:queryType.value,note_reference:document.getElementById('note-reference').value || null,heading:document.getElementById('faq-heading').value,details:document.getElementById('faq-details').value})});
+            const status = document.getElementById('faq-form-status');
+            if (!response.ok) { const error = await response.json(); status.textContent = error.detail || 'Unable to submit question.'; return; }
+            event.target.reset(); document.getElementById('note-reference-wrap').hidden = true; status.textContent = 'Question submitted.'; loadFaqs();
+        });
+        loadFaqs();
+    </script>
+</body>
+</html>     

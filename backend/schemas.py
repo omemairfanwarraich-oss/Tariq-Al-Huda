@@ -54,6 +54,8 @@ class PDFResponse(BaseModel):
     upload_date: str
     cloudinary_url: str
     public_id: Optional[str] = None
+    file_name: Optional[str] = None
+    sort_order: int = 0
 
     class Config:
         populate_by_name = True
@@ -72,6 +74,7 @@ class DiscussionResponse(BaseModel):
     pdf_id: str
     user_id: Optional[str] = None
     user_name: str
+    is_admin: bool = False
     message: str
     timestamp: str
 
@@ -83,14 +86,22 @@ class DiscussionResponse(BaseModel):
 # 4. FAQ Schemas
 # ==========================================
 class FAQCreate(BaseModel):
-    question: str = Field(..., min_length=5, max_length=300)
-    answer: str = Field(..., min_length=5, max_length=1500)
+    query_type: str = Field(..., min_length=2, max_length=40)
+    note_reference: Optional[str] = Field(None, max_length=150)
+    heading: str = Field(..., min_length=3, max_length=160)
+    details: str = Field(..., min_length=5, max_length=2000)
+    answer: str = Field("", max_length=2000)
 
 
 class FAQResponse(BaseModel):
     id: str
-    question: str
+    query_type: str
+    note_reference: Optional[str] = None
+    heading: str
+    details: str
     answer: str
+    answer_by: Optional[str] = None
+    user_name: str
     timestamp: str
 
     class Config:

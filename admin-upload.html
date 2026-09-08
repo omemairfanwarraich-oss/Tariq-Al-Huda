@@ -4,38 +4,44 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage PDFs - Admin Portal</title>
-    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/style.css?v=6">
 </head>
 <body class="bg-gray-50">
     <div id="header-placeholder"></div>
 
     <main class="container mx-auto px-4 py-10" style="max-width: 900px; min-height: 70vh;">
         <div class="flex justify-between items-center mb-6">
-            <h1 style="color: var(--primary-color, #0f4c5c); font-size: 24px; font-weight: bold;">Manage PDFs</h1>
-            <a href="admin-dashboard.html" style="font-size: 14px; color: var(--primary-color, #0f4c5c); text-decoration: none;">← Back to Dashboard</a>
+            <a href="admin-dashboard.html" class="back-link">← Back</a>
+            <div class="section-header"><h1>Manage PDFs</h1></div>
+            
         </div>
 
         <!-- Upload Form Card -->
-        <div style="background: #ffffff; padding: 25px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.06); margin-bottom: 30px;">
-            <h3 style="font-size: 18px; margin-bottom: 15px; color: #333; font-weight: bold;">Upload New PDF Note</h3>
+        <div style="background: var(--midnight-blue-soft); padding: 25px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.06); margin-bottom: 30px;">
+            <h3 style="font-size: 18px; margin-bottom: 15px; color: var(--gold-bright); font-weight: bold;">Upload New PDF Note</h3>
             <form id="upload-form" onsubmit="handleUploadPDF(event)">
                 <div style="margin-bottom: 15px;">
                     <label for="pdf-title" style="display: block; margin-bottom: 5px; font-weight: 500; font-size: 14px;">Document Title</label>
-                    <input type="text" id="pdf-title" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px;">
+                    <input type="text" id="pdf-title" required style="width: 100%; padding: 10px; border: 1px solid var(--glass-border); border-radius: 6px; font-size: 14px; background: var(--midnight-blue); color: var(--gold-bright);">
                 </div>
+                <div style="margin-bottom: 15px;">
+                    <label for="pdf-description" style="display: block; margin-bottom: 5px; font-weight: 500; font-size: 14px;">Description</label>
+                    <textarea id="pdf-description" required maxlength="500" rows="3" style="width: 100%; padding: 10px; border: 1px solid var(--glass-border); border-radius: 6px; font-size: 14px; resize: vertical; background: var(--midnight-blue); color: var(--gold-bright);"></textarea>
                 <div style="margin-bottom: 20px;">
                     <label for="pdf-file" style="display: block; margin-bottom: 5px; font-weight: 500; font-size: 14px;">Select PDF File</label>
                     <input type="file" id="pdf-file" accept="application/pdf" required style="width: 100%; font-size: 14px;">
                 </div>
-                <button type="submit" class="auth-btn-signup" style="padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 500;">Upload PDF</button>
+                <button type="submit" class="button button-primary">Upload PDF</button>
             </form>
         </div>
 
         <!-- Existing PDFs List Section -->
-        <div style="background: #ffffff; padding: 25px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.06);">
-            <h3 style="font-size: 18px; margin-bottom: 15px; color: #333; font-weight: bold;">Uploaded Library</h3>
+        <div style="background: var(--midnight-blue-soft); padding: 25px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.06);">
+            <h3 style="font-size: 18px; margin-bottom: 15px; color: var(--gold-bright); font-weight: bold;">Uploaded Library</h3>
+            <p class="form-hint">Use the arrows to reorder PDFs. Edit updates the title, description, or file without changing the document ID.</p>
+            <div class="admin-toolbar"><input id="pdf-admin-search" placeholder="" style="background: var(--midnight-blue); color: var(--gold-bright); border: 1px solid var(--glass-border);"><button class="button button-secondary" type="button" onclick="filterAdminPDFs()" style="background: var(--midnight-blue); color: var(--gold-bright); border: 1px solid var(--glass-border);">Search</button></div>
             <div id="pdf-list-container">
-                <p style="color: #666; font-size: 14px;">Loading documents...</p>
+                <p style="color: var(--gold-bright); font-size: 14px;">Loading documents...</p>
             </div>
         </div>
     </main>
@@ -43,6 +49,7 @@
     <div id="footer-placeholder"></div>
 
     <script src="assets/js/component-loader.js"></script>
+    <script src="assets/js/auth.js?v=5"></script>
     <script>
         // Security check on load
         document.addEventListener("DOMContentLoaded", () => {
@@ -56,6 +63,11 @@
             fetchAdminPDFs();
         });
 
+        function escapeHtml(value) {
+            return String(value ?? '').replace(/[&<>'"]/g, character => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[character]));
+        }
+
+        let adminPdfs = [];
         async function fetchAdminPDFs() {
             const token = localStorage.getItem("access_token");
             try {
@@ -63,21 +75,8 @@
                     headers: { "Authorization": `Bearer ${token}` }
                 });
                 if (response.ok) {
-                    const pdfs = await response.json();
-                    const container = document.getElementById("pdf-list-container");
-                    if (pdfs.length === 0) {
-                        container.innerHTML = `<p style="color: #666; font-size: 14px;">No PDFs uploaded yet.</p>`;
-                        return;
-                    }
-                    container.innerHTML = pdfs.map(pdf => `
-                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #eee;">
-                            <div>
-                                <h4 style="font-size: 15px; font-weight: 500; color: #333;">${pdf.title}</h4>
-                                <span style="font-size: 12px; color: #888;">Uploaded: ${pdf.uploaded_at || 'N/A'}</span>
-                            </div>
-                            <button onclick="deletePDF('${pdf._id}')" style="background-color: #dc2626; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px;">Delete</button>
-                        </div>
-                    `).join('');
+                    adminPdfs = await response.json();
+                    renderAdminPDFs(adminPdfs);
                 } else {
                     console.error("Failed to fetch PDFs");
                 }
@@ -86,18 +85,98 @@
             }
         }
 
+        function filterAdminPDFs() {
+            const query = document.getElementById('pdf-admin-search').value.toLowerCase().trim();
+            renderAdminPDFs(adminPdfs.filter(pdf => `${pdf.id} ${pdf.title} ${pdf.file_name || ''}`.toLowerCase().includes(query)));
+        }
+
+        function renderAdminPDFs(pdfs) {
+                    const container = document.getElementById("pdf-list-container");
+                    if (pdfs.length === 0) {
+                        container.innerHTML = `<p style="color: var(--bright-gold); font-size: 14px;">No PDFs uploaded yet.</p>`;
+                        return;
+                    }
+                    container.innerHTML = pdfs.map((pdf, index) => `
+                        <div class="admin-pdf-row" data-pdf-id="${escapeHtml(pdf.id)}">
+                            <div>
+                                <h4>${escapeHtml(pdf.id)} - ${escapeHtml(pdf.title)}</h4>
+                                <span>ID: ${escapeHtml(pdf.id)}</span>
+                                <span>File: ${escapeHtml(pdf.file_name || 'Uploaded PDF')}</span>
+                                <span>Uploaded: ${escapeHtml(pdf.upload_date || 'N/A')}</span>
+                            </div>
+                            <div class="admin-pdf-actions">
+                                <button class="button button-small button-secondary" onclick="movePDF(${index}, -1)" ${index === 0 ? 'disabled' : ''}>↑</button>
+                                <button class="button button-small button-secondary" onclick="movePDF(${index}, 1)" ${index === pdfs.length - 1 ? 'disabled' : ''}>↓</button>
+                                <a class="button button-small button-secondary" href="viewer.html?id=${encodeURIComponent(pdf.id)}">Open</a>
+                                <button class="button button-small button-primary" onclick="toggleEdit('${escapeHtml(pdf.id)}')">Edit</button>
+                                <button class="button button-small button-danger" onclick="deletePDF('${escapeHtml(pdf.id)}')">Delete</button>
+                            </div>
+                        </div>
+                    `).join('');
+        }
+
+        let editingPdfId = null;
+        function toggleEdit(pdfId) {
+            const pdf = adminPdfs.find(item => String(item.id) === String(pdfId));
+            if (!pdf) return;
+            editingPdfId = pdfId;
+            document.getElementById('edit-title').value = pdf.title;
+            document.getElementById('edit-description').value = pdf.description;
+            document.getElementById('edit-file').value = '';
+            document.getElementById('pdf-edit-modal').hidden = false;
+        }
+
+        function closeEditModal() {
+            document.getElementById('pdf-edit-modal').hidden = true;
+            editingPdfId = null;
+        }
+
+        async function savePDF(event) {
+            event.preventDefault();
+            const form = document.getElementById('pdf-edit-form');
+            const formData = new FormData(form);
+            const response = await fetch(`/api/admin/pdfs/${encodeURIComponent(editingPdfId)}`, {
+                method: "PUT",
+                headers: { "Authorization": `Bearer ${localStorage.getItem("access_token")}` },
+                body: formData
+            });
+            if (!response.ok) {
+                const data = await response.json();
+                alert(data.detail || "Unable to save changes.");
+                return;
+            }
+            closeEditModal();
+            await fetchAdminPDFs();
+        }
+
+        async function movePDF(index, direction) {
+            const rows = [...document.querySelectorAll('.admin-pdf-row')];
+            const targetIndex = index + direction;
+            if (targetIndex < 0 || targetIndex >= rows.length) return;
+            const orderedIds = rows.map(row => row.dataset.pdfId);
+            [orderedIds[index], orderedIds[targetIndex]] = [orderedIds[targetIndex], orderedIds[index]];
+            const response = await fetch('/api/admin/pdfs/reorder', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem("access_token")}` },
+                body: JSON.stringify(orderedIds)
+            });
+            if (response.ok) await fetchAdminPDFs();
+        }
+
         async function handleUploadPDF(event) {
             event.preventDefault();
             const token = localStorage.getItem("access_token");
             const title = document.getElementById("pdf-title").value;
+            const description = document.getElementById("pdf-description").value;
             const fileInput = document.getElementById("pdf-file").files[0];
 
             const formData = new FormData();
             formData.append("title", title);
+            formData.append("description", description);
             formData.append("file", fileInput);
 
             try {
-                const response = await fetch("/api/admin/pdfs", {
+                const response = await fetch("/api/admin/upload-pdf", {
                     method: "POST",
                     headers: { "Authorization": `Bearer ${token}` },
                     body: formData
@@ -137,5 +216,14 @@
             }
         }
     </script>
+    <div id="pdf-edit-modal" class="modal-backdrop" hidden>
+        <form id="pdf-edit-form" class="modal-card" onsubmit="savePDF(event)">
+            <div class="modal-header"><div><span class="eyebrow">EDIT DOCUMENT</span><h2>Update PDF</h2></div><button type="button" class="modal-close" onclick="closeEditModal()" aria-label="Close">×</button></div>
+            <label for="edit-title">Document name</label><input id="edit-title" name="title" required maxlength="150">
+            <label for="edit-description">Description</label><textarea id="edit-description" name="description" required maxlength="500" rows="4"></textarea>
+            <label for="edit-file">Replace PDF <span class="form-hint">(optional)</span></label><input id="edit-file" name="file" type="file" accept="application/pdf">
+            <div class="modal-actions"><button type="button" class="button button-secondary" onclick="closeEditModal()">Cancel</button><button class="button button-primary" type="submit">Save changes</button></div>
+        </form>
+    </div>
 </body>
 </html>

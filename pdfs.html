@@ -4,23 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>طريق الهدى - All PDF Notes</title>
-    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/style.css?v=7">
 </head>
 <body>
     <!-- Reusable Header -->
     <div id="header-placeholder"></div>
 
     <main class="container pdfs-content">
+        <a href="index.html" class="back-link">← Back</a>
         <div class="section-header">
             <h1>All PDF Notes</h1>
-            <p>Search and browse through the complete repository of Islamic study materials.</p>
+            <p style="color: var(--gold-muted);;">Search and browse through the complete repository of Islamic study materials.</p>
         </div>
 
         <!-- Search Bar -->
         <div class="filter-bar">
             <div class="search-box">
-                <span class="search-icon">🔍</span>
-                <input type="text" id="searchInput" placeholder="Search notes by title or description..." class="search-input">
+                <input type="text" id="searchInput" placeholder="Search notes by title or description..." class="search-input" style="color: var(--gold-bright);"">
+                <button id="searchButton" class="button button-primary button-small" type="button">Search</button>
             </div>
         </div>
 
@@ -34,7 +35,7 @@
     <div id="footer-placeholder"></div>
 
     <script src="assets/js/component-loader.js"></script>
-    <script src="assets/js/pdfs.js"></script>
-    <script src="assets/js/auth.js"></script>
+    <script src="assets/js/pdfs.js?v=6"></script>
+    <script src="assets/js/auth.js?v=6"></script>
 </body>
 </html>

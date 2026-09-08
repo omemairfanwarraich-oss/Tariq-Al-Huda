@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Read Note - طريق الهدى</title>
+	<link rel="stylesheet" href="assets/css/style.css?v=11">
+</head>
+<body>
+	<div id="header-placeholder"></div>
+
+	<main class="container viewer-content">
+		<a id="back-link" href="pdfs.html" class="back-link">← Back</a>
+		<section id="viewer-state" class="empty-state">Loading note...</section>
+
+		<article id="note-viewer" class="note-viewer" hidden>
+			<header class="note-header">
+				<div>
+					<span class="eyebrow">PDF NOTE</span>
+					<h1 id="note-title"></h1>
+					<p id="note-description"></p>
+					<span id="note-file-name" class="note-file-name"></span>
+				</div>
+				<div class="note-id">Document ID: <span id="note-id"></span></div>
+			</header>
+			<div class="pdf-frame-wrap">
+				<iframe id="pdf-frame" title="PDF document" loading="lazy"></iframe>
+			</div>
+			<a id="pdf-fallback" class="button button-secondary" target="_blank" rel="noopener">Open PDF in a new tab <span aria-hidden="true">↗</span></a>
+		</article>
+
+		<section id="discussion-section" class="discussion-section" hidden>
+			<div class="section-heading-row">
+				<div>
+					<span class="eyebrow">COMMUNITY DISCUSSION</span>
+					<h2>Talk about this note</h2>
+				</div>
+				<span id="discussion-count" class="discussion-count"></span>
+			</div>
+			<div id="discussion-list" class="discussion-list chat-thread"></div>
+			<div id="discussion-login-notice" class="discussion-login-notice" hidden>
+				<p>Login to send or view messages.</p>
+				<a class="button button-primary button-small" href="login.html">Login</a>
+			</div>
+			<form id="discussion-form" class="discussion-form">
+				<label for="discussion-message">Your message</label>
+				<textarea id="discussion-message" maxlength="1000" rows="4" required placeholder="Share a question or helpful reflection..."></textarea>
+				<div class="discussion-form-footer">
+					<span id="discussion-login-hint" class="form-hint"></span>
+					<button type="submit" class="button button-primary">Send message <span aria-hidden="true">→</span></button>
+				</div>
+			</form>
+		</section>
+	</main>
+
+	<div id="footer-placeholder"></div>
+	<script src="assets/js/component-loader.js"></script>
+	<script src="assets/js/auth.js?v=6"></script>
+	<script>
+		const pdfId = new URLSearchParams(window.location.search).get('id');
+		const viewerState = document.getElementById('viewer-state');
+		const noteViewer = document.getElementById('note-viewer');
+		const discussionSection = document.getElementById('discussion-section');
+		const discussionList = document.getElementById('discussion-list');
+		const discussionForm = document.getElementById('discussion-form');
+		let discussionRefreshTimer;
+
+		function showError(message) {
+			viewerState.textContent = message;
+			viewerState.className = 'empty-state error-state';
+		}
+
+		function escapeHtml(value) {
+			return String(value ?? '').replace(/[&<>'"]/g, character => ({
+				'&': '&amp;',
+				'<': '&lt;',
+				'>': '&gt;',
+				"'": '&#39;',
+				'"': '&quot;'
+			}[character]));
+		}
+
+		async function loadNote() {
+			if (!pdfId) {
+				showError('No document ID was provided.');
+				return;
+			}
+
+			try {
+				const response = await fetch(`/api/pdfs/${encodeURIComponent(pdfId)}`);
+				if (!response.ok) throw new Error('Note not found.');
+				const pdf = await response.json();
+				document.title = `${pdf.title} - طريق الهدى`;
+				document.getElementById('note-title').textContent = `${pdf.id} - ${pdf.title}`;
+				document.getElementById('note-description').textContent = pdf.description;
+				document.getElementById('note-id').textContent = pdf.id;
+				document.getElementById('note-file-name').textContent = pdf.file_name ? `Original file: ${pdf.file_name}` : '';
+				const fileUrl = `/api/pdfs/${encodeURIComponent(pdf.id)}/file`;
+				document.getElementById('pdf-frame').src = fileUrl;
+				document.getElementById('pdf-fallback').href = fileUrl;
+				viewerState.hidden = true;
+				noteViewer.hidden = false;
+				discussionSection.hidden = false;
+				if (localStorage.getItem('access_token')) {
+					fetch(`/api/recent-pdfs/${encodeURIComponent(pdf.id)}`, {method: 'POST', headers: {Authorization: `Bearer ${localStorage.getItem('access_token')}`}});
+				}
+				if (localStorage.getItem('access_token')) {
+					await loadDiscussions();
+				} else {
+					discussionList.hidden = true;
+					discussionForm.hidden = true;
+					document.getElementById('discussion-count').hidden = true;
+					document.getElementById('discussion-login-notice').hidden = false;
+				}
+			} catch (error) {
+				showError(error.message);
+			}
+		}
+
+		async function loadDiscussions() {
+			const response = await fetch(`/api/discussions/${encodeURIComponent(pdfId)}`, {
+				headers: { 'Authorization': `Bearer ${localStorage.getItem('access_token')}` }
+			});
+			const discussions = response.ok ? await response.json() : [];
+			document.getElementById('discussion-count').textContent = `${discussions.length} message${discussions.length === 1 ? '' : 's'}`;
+			const currentUser = localStorage.getItem('username');
+			const isAdmin = localStorage.getItem('is_admin') === 'true';
+			discussionList.innerHTML = discussions.length ? discussions.map(discussion => `
+				<article class="chat-message ${discussion.user_name === currentUser ? 'chat-message-own' : ''}">
+					<div class="chat-bubble">
+						<div class="message-header">
+							<strong class="message-author">${discussion.is_admin ? '<span class="admin-label">Admin</span> ' : ''}${escapeHtml(discussion.user_name)}</strong>
+							<span>Chat ID: ${escapeHtml(discussion.id)}</span>
+						</div>
+						<p>${escapeHtml(discussion.message)}</p>
+						<div class="message-footer">
+							<time>${escapeHtml(discussion.timestamp)}</time>
+							${isAdmin ? `<button class="chat-delete" type="button" data-delete-chat="${escapeHtml(discussion.id)}">Delete</button>` : ''}
+						</div>
+					</div>
+				</article>
+			`).join('') : '<p class="empty-state">No discussion yet. Start the conversation.</p>';
+
+			if (isAdmin) {
+				discussionList.querySelectorAll('[data-delete-chat]').forEach(button => {
+					button.addEventListener('click', () => deleteDiscussion(button.dataset.deleteChat));
+				});
+			}
+			if (document.activeElement !== document.getElementById('discussion-message')) {
+				discussionList.scrollTop = discussionList.scrollHeight;
+			}
+		}
+
+		async function deleteDiscussion(discussionId) {
+			if (!confirm('Delete this chat message?')) return;
+
+			const response = await fetch(`/api/discussions/${encodeURIComponent(discussionId)}`, {
+				method: 'DELETE',
+				headers: { 'Authorization': `Bearer ${localStorage.getItem('access_token')}` }
+			});
+			if (!response.ok) {
+				const error = await response.json();
+				alert(error.detail || 'Message could not be deleted.');
+				return;
+			}
+			await loadDiscussions();
+		}
+
+		discussionForm.addEventListener('submit', async event => {
+			event.preventDefault();
+			const token = localStorage.getItem('access_token');
+			if (!token) {
+				window.location.href = `login.html?redirect=${encodeURIComponent(window.location.pathname + window.location.search)}`;
+				return;
+			}
+
+			const submitButton = discussionForm.querySelector('button');
+			submitButton.disabled = true;
+			try {
+				const response = await fetch('/api/discussions', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+					body: JSON.stringify({ pdf_id: pdfId, message: document.getElementById('discussion-message').value.trim() })
+				});
+				if (!response.ok) {
+					const error = await response.json();
+					throw new Error(error.detail || 'Message could not be sent.');
+				}
+				discussionForm.reset();
+				await loadDiscussions();
+			} catch (error) {
+				alert(error.message);
+			} finally {
+				submitButton.disabled = false;
+			}
+		});
+
+		document.getElementById('discussion-login-hint').textContent = localStorage.getItem('access_token') ? `Posting as ${localStorage.getItem('username') || 'signed-in user'}` : 'Sign in to join the discussion.';
+		loadNote().then(() => {
+			if (localStorage.getItem('access_token')) {
+				discussionRefreshTimer = window.setInterval(loadDiscussions, 2000);
+			}
+		});
+		window.addEventListener('beforeunload', () => window.clearInterval(discussionRefreshTimer));
+	</script>
+</body>
+</html>

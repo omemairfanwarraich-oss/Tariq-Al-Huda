@@ -4,37 +4,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register - طريق الهدى</title>
-    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/style.css?v=6">
 </head>
 <body>
     <!-- Header Placeholder -->
     <div id="header-placeholder"></div>
 
     <main class="auth-wrapper" style="display: flex; justify-content: center; align-items: center; min-height: 75vh; padding: 40px 20px;">
-        <div class="auth-card" style="background: #ffffff; padding: 35px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); width: 100%; max-width: 400px;">
-            <h2 style="text-align: center; margin-bottom: 24px; color: var(--primary-color, #0f4c5c);">Create an Account</h2>
+        <div class="auth-card" style="background: linear-gradient(145deg, rgba(20, 48, 91, 0.72), rgba(7, 21, 47, 0.62)); padding: 35px; border-radius: 10px; box-shadow: 0 20px 60px var(--shadow-deep), inset 0 1px 0 rgba(255, 255, 255, 0.07); backdrop-filter: blur(18px) saturate(120%); width: 100%; max-width: 400px; border: 1px solid var(--glass-border);">
+            <h2 style="text-align: center; margin-bottom: 24px; color: var(--gold-bright); font-size: 22px; font-weight: bold;">Create an Account</h2>
             
             <form id="register-form" onsubmit="handleRegister(event, 'register-form')">
                 <div style="margin-bottom: 18px;">
-                    <label for="username" style="display: block; margin-bottom: 6px; font-weight: 500; color: #333;">Username</label>
-                    <input type="text" id="username" name="username" required style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px;">
+                    <label for="username" style="display: block; margin-bottom: 6px; font-weight: 500; color: var(--gold);">Username</label>
+                    <input type="text" id="username" name="username" required style="width: 100%; padding: 10px 12px; border: 1px solid var(--glass-border); border-radius: 6px; font-size: 14px; background: var(--midnight-blue); color: var(--gold-bright);">
                 </div>
 
                 <div style="margin-bottom: 18px;">
-                    <label for="email" style="display: block; margin-bottom: 6px; font-weight: 500; color: #333;">Email</label>
-                    <input type="email" id="email" name="email" required style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px;">
+                    <label for="email" style="display: block; margin-bottom: 6px; font-weight: 500; color: var(--gold);">Email</label>
+                    <input type="email" id="email" name="email" required style="width: 100%; padding: 10px 12px; border: 1px solid var(--glass-border); border-radius: 6px; font-size: 14px; background: var(--midnight-blue); color: var(--gold-bright);">
                 </div>
                 
                 <div style="margin-bottom: 24px;">
-                    <label for="password" style="display: block; margin-bottom: 6px; font-weight: 500; color: #333;">Password</label>
-                    <input type="password" id="password" name="password" required style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px;">
+                    <label for="password" style="display: block; margin-bottom: 6px; font-weight: 500; color: var(--gold);">Password</label>
+                    <input type="password" id="password" name="password" required style="width: 100%; padding: 10px 12px; border: 1px solid var(--glass-border); border-radius: 6px; font-size: 14px; background: var(--midnight-blue); color: var(--gold-bright);">
                 </div>
                 
-                <button type="submit" class="auth-btn-signup" style="width: 100%; padding: 12px; border: none; cursor: pointer; border-radius: 6px; font-size: 16px; font-weight: 500; text-align: center;">Register</button>
+                <button type="submit" class="button button-primary" style="width: 100%; padding: 12px; border: none; cursor: pointer; border-radius: 6px; font-size: 16px; font-weight: 500; text-align: center;">Register</button>
             </form>
             
-            <p style="text-align: center; margin-top: 20px; font-size: 14px; color: #666;">
-                Already have an account? <a href="login.html" style="color: var(--primary-color, #0f4c5c); font-weight: 500; text-decoration: none;">Login</a>
+            <p style="text-align: center; margin-top: 20px; font-size: 14px; color: var(--ink-muted);">
+                Already have an account? <a href="login.html" style="color: var(--gold); font-weight: 500; text-decoration: none;">Login</a>
             </p>
         </div>
     </main>
@@ -44,6 +44,6 @@
 
     <!-- Scripts -->
     <script src="assets/js/component-loader.js"></script>
-    <script src="assets/js/auth.js"></script>
+    <script src="assets/js/auth.js?v=3"></script>
 </body>
 </html>

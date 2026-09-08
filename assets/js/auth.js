@@ -2,19 +2,30 @@
 function checkAuthStatus() {
     const token = localStorage.getItem("access_token");
     const username = localStorage.getItem("username");
-    
+    const isAdmin = localStorage.getItem("is_admin") === "true";
+    const navLinks = document.getElementById("navLinks");
+    if (isAdmin && navLinks) {
+        navLinks.innerHTML = `<a href="admin-dashboard.html" class="nav-link">Dashboard</a><a href="admin-upload.html" class="nav-link">Manage PDFs</a><a href="admin-faqs.html" class="nav-link">Manage FAQs</a><form class="nav-search" action="pdfs.html" method="get" role="search"><input name="q" aria-label="Search documents" placeholder="Search ID or name"><button type="submit" aria-label="Search documents">⌕</button></form><span id="auth-nav" class="inline-flex items-center"></span>`;
+    }
     const authNav = document.getElementById("auth-nav");
     if (!authNav) return;
 
     if (token && username) {
+        const adminLink = '';
         authNav.innerHTML = `
-            <div class="relative group cursor-pointer inline-block">
-                <span class="nav-link font-medium flex items-center">👤 ${username} ▾</span>
-                <div class="absolute right-0 hidden group-hover:block bg-white shadow-md rounded mt-1 py-2 w-32 border z-50">
-                    <button onclick="logout()" class="w-full text-left px-4 py-2 text-red-600 hover:bg-gray-100 text-sm">Logout</button>
+            <div class="auth-profile">
+                <button class="auth-user-button" type="button" aria-expanded="false"><span class="auth-user-name">${username}</span><span aria-hidden="true">▾</span></button>
+                <div class="auth-menu">
+                    ${adminLink}
+                    <button onclick="logout()" class="button button-danger">Logout</button>
                 </div>
             </div>
         `;
+        const profileButton = authNav.querySelector('.auth-user-button');
+        profileButton.addEventListener('click', () => {
+            const open = authNav.classList.toggle('auth-menu-open');
+            profileButton.setAttribute('aria-expanded', String(open));
+        });
     } else {
         authNav.innerHTML = `
             <a href="login.html" class="auth-btn-login">Login</a>

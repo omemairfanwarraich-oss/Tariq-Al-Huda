@@ -4,34 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>طريق الهدى - Home</title>
-    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/style.css?v=12">
 </head>
 <body>
     <!-- Reusable Header -->
     <div id="header-placeholder"></div>
 
-    <main class="container home-content">
+    <main class="container page-shell home-content">
         <!-- 1. Heading -->
         <div class="section-header">
             <h1>PDF Notes</h1>
-            <p>Access your recent materials and browse the complete library.</p>
+            <p style="color: var(--gold-muted);">Access your recent materials and browse the complete library.</p>
         </div>
 
         <div class="home-stack">
             <!-- 2. Recently Accessed PDF Tile (Dynamic backend placeholder) -->
-            <div class="home-tile recent-tile">
-                <div class="tile-icon">📄</div>
-                <div class="tile-body">
-                    <span class="badge">Recent Note</span>
-                    <h3>Recent accessed PDF</h3>
-                    <p>Continue reading your last opened document.</p>
-                </div>
-                <a href="viewer.html?id=placeholder" class="btn-primary">Resume Reading</a>
-            </div>
+            <section class=""><div class="section-heading-row"><div><span class="eyebrow">YOUR SHELF</span><h2 style="color: var(--gold-bright);">Recently accessed</h2></div><a href="pdfs.html" class="button button-secondary button-small">Browse all</a></div><div id="recent-pdf-track" class="recent-pdf-track"><p class="empty-state">Loading recent notes...</p></div></section>
 
             <!-- 3. Tile to Access All PDFs Page -->
             <a href="pdfs.html" class="home-tile navigation-tile">
-                <div class="tile-icon">📚</div>
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--gold-bright)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+    <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+</svg>
                 <div class="tile-body">
                     <h3>All PDF Notes</h3>
                     <p>Explore the complete catalog of verified Islamic notes and study materials.</p>
@@ -41,7 +36,11 @@
 
             <!-- 4. Tile to Go to FAQ Page -->
             <a href="faqs.html" class="home-tile navigation-tile">
-                <div class="tile-icon">❓</div>
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--gold-bright)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="10" stroke="var(--glass-border)" fill="var(--midnight-blue)"/>
+    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+    <line x1="12" y1="17" x2="12.01" y2="17"/>
+</svg>
                 <div class="tile-body">
                     <h3>FAQs & Q&A</h3>
                     <p>Check answers to common questions or submit a new question.</p>
@@ -55,6 +54,7 @@
     <div id="footer-placeholder"></div>
 
     <script src="assets/js/component-loader.js"></script>
-    <script src="assets/js/auth.js"></script>
+    <script src="assets/js/auth.js?v=6"></script>
+    <script src="assets/js/recent-pdfs.js?v=2"></script>
 </body>
 </html>

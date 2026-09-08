@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard - طريق الهدى</title>
-    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/style.css?v=6">
 </head>
 <body class="bg-gray-50">
     <!-- Header Placeholder -->
@@ -12,33 +12,32 @@
 
     <main class="container mx-auto px-4 py-10" style="max-width: 1000px; min-height: 70vh;">
         <div class="flex justify-between items-center mb-8">
-            <h1 style="color: var(--primary-color, #0f4c5c); font-size: 28px; font-weight: bold;">Admin Dashboard</h1>
-            <button onclick="adminLogout()" style="background-color: #dc2626; color: white; padding: 8px 16px; border-radius: 6px; border: none; cursor: pointer; font-size: 14px; font-weight: 500;">Logout</button>
+            <div class="section-header"><h1>Admin Dashboard</h1></div>
         </div>
 
-        <p style="color: #666; margin-bottom: 30px; font-size: 16px;">Welcome back, Administrator. Select a management portal below to proceed.</p>
+        <p style="color: var(--gold-bright); margin-bottom: 30px; font-size: 16px;">Welcome back, Administrator. Select a management portal below to proceed.</p>
 
         <!-- Admin Navigation Tiles Grid -->
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px;">
             
             <!-- Tile 1: Manage PDFs -->
-            <div style="background: #ffffff; padding: 30px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.06); border-top: 4px solid var(--primary-color, #0f4c5c); display: flex; flex-direction: column; justify-content: space-between;">
+            <div class="admin-tile" style="background: #ffffff; padding: 30px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.06); border-top: 4px solid var(--primary-color, #0f4c5c); display: flex; flex-direction: column; justify-content: space-between;">
                 <div>
                     <div style="font-size: 32px; margin-bottom: 12px;">📁</div>
                     <h3 style="font-size: 20px; color: var(--primary-color, #0f4c5c); margin-bottom: 10px; font-weight: bold;">Manage PDFs</h3>
                     <p style="color: #666; font-size: 14px; line-height: 1.5; margin-bottom: 20px;">Upload new PDF notes, view the complete document library, update details, or delete files from Cloudinary storage.</p>
                 </div>
-                <a href="admin-upload.html" style="background-color: var(--primary-color, #0f4c5c); color: white; text-align: center; padding: 10px; border-radius: 6px; text-decoration: none; font-weight: 500; font-size: 14px;">Open PDF Manager →</a>
+                <a href="admin-upload.html" class="button button-primary">Open PDF Manager <span aria-hidden="true">→</span></a>
             </div>
 
             <!-- Tile 2: Manage FAQs & Q&A -->
-            <div style="background: #ffffff; padding: 30px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.06); border-top: 4px solid var(--primary-color, #0f4c5c); display: flex; flex-direction: column; justify-content: space-between;">
+            <div class="admin-tile" style="background: #ffffff; padding: 30px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.06); border-top: 4px solid var(--primary-color, #0f4c5c); display: flex; flex-direction: column; justify-content: space-between;">
                 <div>
                     <div style="font-size: 32px; margin-bottom: 12px;">💬</div>
                     <h3 style="font-size: 20px; color: var(--primary-color, #0f4c5c); margin-bottom: 10px; font-weight: bold;">Manage FAQs & Q&A</h3>
                     <p style="color: #666; font-size: 14px; line-height: 1.5; margin-bottom: 20px;">Review user-submitted questions, view the usernames of the askers, provide answers, and manage published Q&A items.</p>
                 </div>
-                <a href="admin-faqs.html" style="background-color: var(--primary-color, #0f4c5c); color: white; text-align: center; padding: 10px; border-radius: 6px; text-decoration: none; font-weight: 500; font-size: 14px;">Open FAQ Manager →</a>
+                <a href="admin-faqs.html" class="button button-primary">Open FAQ Manager <span aria-hidden="true">→</span></a>
             </div>
 
         </div>
@@ -49,6 +48,7 @@
 
     <!-- Scripts -->
     <script src="assets/js/component-loader.js"></script>
+    <script src="assets/js/auth.js?v=5"></script>
     <script>
         // Simple admin guard check on load
         document.addEventListener("DOMContentLoaded", () => {
