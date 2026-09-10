@@ -45,7 +45,7 @@ function renderLibraryPdfs(pdfs) {
 
     container.innerHTML = '';
     if (pdfs.length === 0) {
-        container.innerHTML = '<p class="empty-state">No notes match your search.</p>';
+        container.innerHTML = '<p class="empty-state" style="color: var(--gold-muted);">No notes match your search.</p>';
         return;
     }
 
