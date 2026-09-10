@@ -344,12 +344,12 @@ main {
     border: none;
     background: transparent;
     font-size: 0.95rem;
-    color: var(--text-charcoal);
+    color: var(--gold-bright);
     outline: none;
 }
 
 .search-input::placeholder {
-    color: #94a3b8;
+    color: var(--gold-muted);
 }
 
 .no-results {
