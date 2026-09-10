@@ -986,7 +986,7 @@ body::before {
 .arabic-brand { color: var(--gold-bright); text-shadow: 0 0 22px rgba(240, 207, 121, 0.22); }
 .sub-brand { color: var(--ink-muted); }
 .nav-links { flex: 1; justify-content: flex-end; gap: 12px; }
-.nav-link { padding: 9px 10px; border-radius: 6px; color: var(--ink-muted); font-family: "Trebuchet MS", sans-serif; font-size: 0.8rem; letter-spacing: 0.02em; transition: color var(--ease-smooth), background var(--ease-smooth), transform var(--ease-smooth); }
+.nav-link { padding: 9px 10px; border-radius: 6px; color: var(--gold-muted); font-family: "Trebuchet MS", sans-serif; font-size: 0.8rem; letter-spacing: 0.02em; transition: color var(--ease-smooth), background var(--ease-smooth), transform var(--ease-smooth); }
 .nav-link:hover { color: var(--gold-bright); background: var(--glass-light); transform: translateY(-1px); }
 
 .nav-search { display: flex; align-items: center; width: min(220px, 24vw); margin-left: 4px; padding: 3px; border: 1px solid var(--glass-border); border-radius: 6px; background: rgba(255, 255, 255, 0.06); }
