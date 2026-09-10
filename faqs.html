@@ -46,7 +46,7 @@
             const response = await fetch('/api/faqs');
             const faqs = response.ok ? await response.json() : [];
             document.getElementById('faq-count').textContent = `${faqs.length} question${faqs.length === 1 ? '' : 's'}`;
-            faqList.innerHTML = faqs.length ? faqs.map(faq => `<details class="faq-item"><summary><span><b>${escapeHtml(faq.heading)}</b><small>${escapeHtml(faq.query_type)}${faq.note_reference ? ` · ${escapeHtml(faq.note_reference)}` : ''}</small></span><span>+</span></summary><div class="faq-answer"><p>${escapeHtml(faq.details)}</p>${faq.answer ? `<div class="faq-reply"><strong>${escapeHtml(faq.answer_by || 'Administrator')} (Admin)</strong><p>${escapeHtml(faq.answer)}</p></div>` : '<p class="form-hint">Awaiting an answer from the team.</p>'}</div></details>`).join('') : '<p class="empty-state">No FAQs yet. Be the first to ask.</p>';
+            faqList.innerHTML = faqs.length ? faqs.map(faq => `<details class="faq-item"><summary><span><b>${escapeHtml(faq.heading)}</b><small>${escapeHtml(faq.query_type)}${faq.note_reference ? ` · ${escapeHtml(faq.note_reference)}` : ''}</small></span><span>+</span></summary><div class="faq-answer"><p>${escapeHtml(faq.details)}</p>${faq.answer ? `<div class="faq-reply"><strong>${escapeHtml(faq.answer_by || 'Administrator')} (Admin)</strong><p>${escapeHtml(faq.answer)}</p></div>` : '<p class="form-hint">Awaiting an answer from the team.</p>'}</div></details>`).join('') : '<p class="empty-state" style="color: var(--gold-muted);">No FAQs yet. Be the first to ask.</p>';
         }
         document.getElementById('faq-form').addEventListener('submit', async event => {
             event.preventDefault();
