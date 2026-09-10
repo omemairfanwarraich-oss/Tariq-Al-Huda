@@ -1078,7 +1078,7 @@ main { padding: 56px 0; animation: page-enter 600ms var(--ease-smooth) both; }
 .pdf-card h2, .pdf-card p, .tile-body h3, .note-header h1, .section-heading-row h2, .faq-form-panel h2, .glass-panel > h2 { color: var(--ink-light); }
 .pdf-card p, .tile-body p, .pdf-card-meta, .pdf-card-topline, .note-id, .discussion-count, .form-hint { color: var(--ink-muted); }
 
-.button-primary { background: linear-gradient(135deg, var(--gold-bright), var(--gold)); color: var(--midnight-blue); box-shadow: 0 8px 20px rgba(216, 177, 90, 0.16); }
+.button-primary { background: linear-gradient(135deg, var(--gold-bright), var(--gold-muted)); color: var(--midnight-blue); box-shadow: 0 8px 20px rgba(216, 177, 90, 0.16); }
 .button-primary:hover { background: var(--gold-bright); color: var(--midnight-blue); }
 .button-secondary { background: rgba(255, 255, 255, 0.05); border-color: var(--glass-border); color: var(--gold-bright); }
 .button-secondary:hover { background: rgba(216, 177, 90, 0.14); color: var(--gold-bright); }
