@@ -954,6 +954,7 @@ body > main, body > #header-placeholder + main { padding-top: 72px; padding-bott
 html { scroll-behavior: smooth; }
 
 body {
+   padding-top: 47px;
     position: relative;
     overflow-x: hidden;
     background: radial-gradient(circle at 12% 8%, rgba(216, 177, 90, 0.16), transparent 28%), radial-gradient(circle at 88% 82%, rgba(42, 91, 151, 0.3), transparent 34%), var(--midnight-blue);
