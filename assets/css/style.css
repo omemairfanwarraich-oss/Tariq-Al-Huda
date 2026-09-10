@@ -973,7 +973,7 @@ body::before {
 }
 
 .site-header {
-    position: sticky !important;
+    position: fixed !important;
     top: 0;
     background: rgba(7, 21, 47, 0.8);
     border-bottom: 1px solid var(--glass-border);
