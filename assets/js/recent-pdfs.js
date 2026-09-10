@@ -3,7 +3,7 @@ async function loadRecentPdfs() {
     if (!track) return;
     const token = localStorage.getItem('access_token');
     if (!token) {
-        track.innerHTML = '<p class="empty-state">Sign in to see your recently opened notes.</p>';
+        track.innerHTML = '<p class="empty-state" style="color: var(--gold-muted);">Sign in to see your recently opened notes.</p>';
         return;
     }
     const response = await fetch('/api/recent-pdfs', {headers: {Authorization: `Bearer ${token}`} });
