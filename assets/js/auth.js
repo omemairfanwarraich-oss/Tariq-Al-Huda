@@ -54,7 +54,7 @@ async function handleLogin(event, formId) {
             localStorage.setItem("access_token", data.access_token);
             localStorage.setItem("username", data.username);
             localStorage.setItem("is_admin", data.is_admin);
-            window.location.href = "/pdfs.html"; // Redirect to notes page after login
+            window.location.href = "/index.html"; // Redirect to notes page after login
         } else {
             alert(data.detail || "Login failed");
         }
