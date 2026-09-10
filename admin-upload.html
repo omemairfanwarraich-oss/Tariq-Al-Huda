@@ -39,7 +39,7 @@
         <!-- Existing PDFs List Section -->
         <div style="background: var(--midnight-blue-soft); padding: 25px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.06);">
             <h3 style="font-size: 18px; margin-bottom: 15px; color: var(--gold-bright); font-weight: bold;">Uploaded Library</h3>
-            <p class="form-hint">Use the arrows to reorder PDFs. Edit updates the title, description, or file without changing the document ID.</p>
+            <p class="form-hint" style="color: var(--gold-muted);">Use the arrows to reorder PDFs. Edit updates the title, description, or file without changing the document ID.</p>
             <div class="admin-toolbar"><input id="pdf-admin-search" placeholder="" style="background: var(--midnight-blue); color: var(--gold-bright); border: 1px solid var(--glass-border);"><button class="button button-secondary" type="button" onclick="filterAdminPDFs()" style="background: var(--midnight-blue); color: var(--gold-bright); border: 1px solid var(--glass-border);">Search</button></div>
             <div id="pdf-list-container">
                 <p style="color: var(--gold-bright); font-size: 14px;">Loading documents...</p>
@@ -94,7 +94,7 @@
         function renderAdminPDFs(pdfs) {
                     const container = document.getElementById("pdf-list-container");
                     if (pdfs.length === 0) {
-                        container.innerHTML = `<p style="color: var(--bright-gold); font-size: 14px;">No PDFs uploaded yet.</p>`;
+                        container.innerHTML = `<p style="color: var(--gold-muted); font-size: 14px;">No PDFs uploaded yet.</p>`;
                         return;
                     }
                     container.innerHTML = pdfs.map((pdf, index) => `
