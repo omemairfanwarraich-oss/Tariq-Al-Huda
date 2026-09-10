@@ -990,8 +990,8 @@ body::before {
 .nav-link:hover { color: var(--gold-bright); background: var(--glass-light); transform: translateY(-1px); }
 
 .nav-search { display: flex; align-items: center; width: min(220px, 24vw); margin-left: 4px; padding: 3px; border: 1px solid var(--glass-border); border-radius: 6px; background: rgba(255, 255, 255, 0.06); }
-.nav-search input { min-width: 0; width: 100%; padding: 7px 9px; border: 0; outline: 0; background: transparent; color: var(--ink-light); font: 0.78rem "Trebuchet MS", sans-serif; }
-.nav-search input::placeholder { color: var(--ink-muted); }
+.nav-search input { min-width: 0; width: 100%; padding: 7px 9px; border: 0; outline: 0; background: transparent; color: var(--gold-bright); font: 0.78rem;font-family: "Palatino Linotype", Palatino, Georgia, serif; }
+.nav-search input::placeholder { color: var(--gold-muted); font-family: "Palatino Linotype", Palatino, Georgia, serif; }
 .nav-search button { width: 30px; height: 30px; border: 0; border-radius: 4px; background: var(--gold); color: var(--midnight-blue); font: 1.15rem Georgia, serif; cursor: pointer; transition: background var(--ease-smooth), transform var(--ease-smooth); }
 .nav-search button:hover { background: var(--gold-bright); transform: scale(1.04); }
 
