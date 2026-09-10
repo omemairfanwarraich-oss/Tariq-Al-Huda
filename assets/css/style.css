@@ -635,7 +635,7 @@ main {
     color: #64748b;
     text-align: center;
     background: var(--surface-white);
-    border: 1px dashed rgba(188, 143, 143, 0.55);
+    border: 1px dashed var(--gold-muted);
     border-radius: 10px;
 }
 
