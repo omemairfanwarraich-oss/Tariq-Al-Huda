@@ -24,11 +24,11 @@
                 <h2 style="color: var(--gold-bright);">ASK A QUESTION</h2>
                 <h2>Send your query</h2>
                 <form id="faq-form" class="stack-form">
-                    <label for="query-type">Query type</label>
+                    <label for="query-type" style="color:var(--gold-bright);">Query type</label>
                     <select id="query-type" required style="background: var(--midnight-blue); color: var(--gold-bright); border: 1px solid var(--glass-border); padding: 10px; border-radius: 6px;"><option value="general">General question</option><option value="notes">Question about a note</option><option value="technical">Technical issue</option></select>
                     <div id="note-reference-wrap" hidden><label for="note-reference">Note name or ID</label><input id="note-reference" maxlength="150" placeholder="Example: Tafsir lesson or 101" style="background: var(--midnight-blue); color: var(--gold-bright); border: 1px solid var(--glass-border);"></div>
-                    <label for="faq-heading">Heading</label><input id="faq-heading" required maxlength="160" placeholder="Summarize your question" style="background: var(--midnight-blue); color: var(--gold-bright); border: 1px solid var(--glass-border);">
-                    <label for="faq-details">Details</label><textarea id="faq-details" required maxlength="2000" rows="6" placeholder="Explain what you would like to know..." style="background: var(--midnight-blue); color: var(--gold-bright); border: 1px solid var(--glass-border);"></textarea>
+                    <label for="faq-heading" style="color:var(--gold-bright);">Heading</label><input id="faq-heading" required maxlength="160" placeholder="Summarize your question" style="background: var(--midnight-blue); color: var(--gold-bright); border: 1px solid var(--glass-border);">
+                    <label for="faq-details" style="color:var(--gold-bright);">Details</label><textarea id="faq-details" required maxlength="2000" rows="6" placeholder="Explain what you would like to know..." style="background: var(--midnight-blue); color: var(--gold-bright); border: 1px solid var(--glass-border);"></textarea>
                     <button class="button button-primary" type="submit">Submit question <span aria-hidden="true">→</span></button>
                     <p id="faq-form-status" class="form-hint"></p>
                 </form>
