@@ -22,14 +22,14 @@
             <h3 style="font-size: 18px; margin-bottom: 15px; color: var(--gold-bright); font-weight: bold;">Upload New PDF Note</h3>
             <form id="upload-form" onsubmit="handleUploadPDF(event)">
                 <div style="margin-bottom: 15px;">
-                    <label for="pdf-title" style="display: block; margin-bottom: 5px; font-weight: 500; font-size: 14px;">Document Title</label>
+                    <label for="pdf-title" style="display: block; margin-bottom: 5px; font-weight: 500; font-size: 14px; color: var(--gold-bright);">Document Title</label>
                     <input type="text" id="pdf-title" required style="width: 100%; padding: 10px; border: 1px solid var(--glass-border); border-radius: 6px; font-size: 14px; background: var(--midnight-blue); color: var(--gold-bright);">
                 </div>
                 <div style="margin-bottom: 15px;">
-                    <label for="pdf-description" style="display: block; margin-bottom: 5px; font-weight: 500; font-size: 14px;">Description</label>
+                    <label for="pdf-description" style="display: block; margin-bottom: 5px; font-weight: 500; font-size: 14px; color: var(--gold-bright);">Description</label>
                     <textarea id="pdf-description" required maxlength="500" rows="3" style="width: 100%; padding: 10px; border: 1px solid var(--glass-border); border-radius: 6px; font-size: 14px; resize: vertical; background: var(--midnight-blue); color: var(--gold-bright);"></textarea>
                 <div style="margin-bottom: 20px;">
-                    <label for="pdf-file" style="display: block; margin-bottom: 5px; font-weight: 500; font-size: 14px;">Select PDF File</label>
+                    <label for="pdf-file" style="display: block; margin-bottom: 5px; font-weight: 500; font-size: 14px; color: var(--gold-bright);">Select PDF File</label>
                     <input type="file" id="pdf-file" accept="application/pdf" required style="width: 100%; font-size: 14px;">
                 </div>
                 <button type="submit" class="button button-primary">Upload PDF</button>
