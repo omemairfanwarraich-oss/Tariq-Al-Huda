@@ -975,6 +975,8 @@ body::before {
 .site-header {
     position: fixed !important;
     top: 0;
+    left: 0;
+    width: 100%;
     background: rgba(7, 21, 47, 0.8);
     border-bottom: 1px solid var(--glass-border);
     box-shadow: 0 12px 34px var(--shadow-deep);
