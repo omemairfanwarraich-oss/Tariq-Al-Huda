@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage PDFs - Admin Portal</title>
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 24 24' fill='none' stroke='%23d4af37' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'><path d='M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z'/><path d='M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z'/></svg>">
     <link rel="stylesheet" href="assets/css/style.css?v=6">
 </head>
 <body class="bg-gray-50">
@@ -28,11 +27,18 @@
                 <div style="margin-bottom: 15px;">
                     <label for="pdf-description" style="display: block; margin-bottom: 5px; font-weight: 500; font-size: 14px; color: var(--gold-bright);">Description</label>
                     <textarea id="pdf-description" required maxlength="500" rows="3" style="width: 100%; padding: 10px; border: 1px solid var(--glass-border); border-radius: 6px; font-size: 14px; resize: vertical; background: var(--midnight-blue); color: var(--gold-bright);"></textarea>
+                </div>
                 <div style="margin-bottom: 20px;">
                     <label for="pdf-file" style="display: block; margin-bottom: 5px; font-weight: 500; font-size: 14px; color: var(--gold-bright);">Select PDF File</label>
                     <input type="file" id="pdf-file" accept="application/pdf" required style="width: 100%; font-size: 14px;">
                 </div>
                 <button type="submit" class="button button-primary">Upload PDF</button>
+                <div id="progress-container" style="display: none; margin-top: 15px; background: rgba(0,0,0,0.2); padding: 12px; border-radius: 8px; border: 1px solid #a9853d;">
+                    <div style="background-color: #2a2a2a; border-radius: 6px; overflow: hidden; height: 14px; border: 1px solid #a9853d;">
+                        <div id="upload-progress-fill" style="width: 0%; height: 100%; background-color: #f0cf79; transition: width 0.2s ease;"></div>
+                    </div>
+                    <span id="progress-text" style="font-size: 13px; font-weight: bold; display: block; text-align: center; margin-top: 6px; color: #f0cf79;">0%</span>
+                </div>
             </form>
         </div>
 
@@ -92,28 +98,28 @@
         }
 
         function renderAdminPDFs(pdfs) {
-                    const container = document.getElementById("pdf-list-container");
-                    if (pdfs.length === 0) {
-                        container.innerHTML = `<p style="color: var(--gold-muted); font-size: 14px;">No PDFs uploaded yet.</p>`;
-                        return;
-                    }
-                    container.innerHTML = pdfs.map((pdf, index) => `
-                        <div class="admin-pdf-row" data-pdf-id="${escapeHtml(pdf.id)}">
-                            <div>
-                                <h4>${escapeHtml(pdf.id)} - ${escapeHtml(pdf.title)}</h4>
-                                <span>ID: ${escapeHtml(pdf.id)}</span>
-                                <span>File: ${escapeHtml(pdf.file_name || 'Uploaded PDF')}</span>
-                                <span>Uploaded: ${escapeHtml(pdf.upload_date || 'N/A')}</span>
-                            </div>
-                            <div class="admin-pdf-actions">
-                                <button class="button button-small button-secondary" onclick="movePDF(${index}, -1)" ${index === 0 ? 'disabled' : ''}>↑</button>
-                                <button class="button button-small button-secondary" onclick="movePDF(${index}, 1)" ${index === pdfs.length - 1 ? 'disabled' : ''}>↓</button>
-                                <a class="button button-small button-secondary" href="viewer.html?id=${encodeURIComponent(pdf.id)}">Open</a>
-                                <button class="button button-small button-primary" onclick="toggleEdit('${escapeHtml(pdf.id)}')">Edit</button>
-                                <button class="button button-small button-danger" onclick="deletePDF('${escapeHtml(pdf.id)}')">Delete</button>
-                            </div>
-                        </div>
-                    `).join('');
+            const container = document.getElementById("pdf-list-container");
+            if (pdfs.length === 0) {
+                container.innerHTML = `<p style="color: var(--gold-muted); font-size: 14px;">No PDFs uploaded yet.</p>`;
+                return;
+            }
+            container.innerHTML = pdfs.map((pdf, index) => `
+                <div class="admin-pdf-row" data-pdf-id="${escapeHtml(pdf.id)}">
+                    <div>
+                        <h4>${escapeHtml(pdf.id)} - ${escapeHtml(pdf.title)}</h4>
+                        <span>ID: ${escapeHtml(pdf.id)}</span>
+                        <span>File: ${escapeHtml(pdf.file_name || 'Uploaded PDF')}</span>
+                        <span>Uploaded: ${escapeHtml(pdf.upload_date || 'N/A')}</span>
+                    </div>
+                    <div class="admin-pdf-actions">
+                        <button class="button button-small button-secondary" onclick="movePDF(${index}, -1)" ${index === 0 ? 'disabled' : ''}>↑</button>
+                        <button class="button button-small button-secondary" onclick="movePDF(${index}, 1)" ${index === pdfs.length - 1 ? 'disabled' : ''}>↓</button>
+                        <a class="button button-small button-secondary" href="viewer.html?id=${encodeURIComponent(pdf.id)}">Open</a>
+                        <button class="button button-small button-primary" onclick="toggleEdit('${escapeHtml(pdf.id)}')">Edit</button>
+                        <button class="button button-small button-danger" onclick="deletePDF('${escapeHtml(pdf.id)}')">Delete</button>
+                    </div>
+                </div>
+            `).join('');
         }
 
         let editingPdfId = null;
@@ -164,37 +170,69 @@
             if (response.ok) await fetchAdminPDFs();
         }
 
-        async function handleUploadPDF(event) {
+        function handleUploadPDF(event) {
             event.preventDefault();
             const token = localStorage.getItem("access_token");
             const title = document.getElementById("pdf-title").value;
             const description = document.getElementById("pdf-description").value;
             const fileInput = document.getElementById("pdf-file").files[0];
 
+            if (!fileInput) {
+                alert("Please select a file.");
+                return;
+            }
+
             const formData = new FormData();
             formData.append("title", title);
             formData.append("description", description);
             formData.append("file", fileInput);
 
-            try {
-                const response = await fetch("/api/admin/upload-pdf", {
-                    method: "POST",
-                    headers: { "Authorization": `Bearer ${token}` },
-                    body: formData
-                });
+            const progressContainer = document.getElementById("progress-container");
+            const progressFill = document.getElementById("upload-progress-fill");
+            const progressText = document.getElementById("progress-text");
 
-                if (response.ok) {
+            progressContainer.style.display = "block";
+            progressFill.style.width = "0%";
+            progressText.innerText = "0%";
+
+            const xhr = new XMLHttpRequest();
+
+            xhr.upload.addEventListener("progress", function(e) {
+                if (e.lengthComputable) {
+                    const percentComplete = Math.round((e.loaded / e.total) * 100);
+                    progressFill.style.width = percentComplete + "%";
+                    progressText.innerText = percentComplete + "%";
+                }
+            });
+
+            xhr.addEventListener("load", function() {
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    progressText.innerText = "Upload Complete!";
                     alert("PDF uploaded successfully!");
                     document.getElementById("upload-form").reset();
                     fetchAdminPDFs();
+                    setTimeout(() => {
+                        progressContainer.style.display = "none";
+                    }, 1500);
                 } else {
-                    const data = await response.json();
-                    alert(data.detail || "Upload failed.");
+                    try {
+                        const data = JSON.parse(xhr.responseText);
+                        alert(data.detail || "Upload failed.");
+                    } catch (err) {
+                        alert("Upload failed.");
+                    }
+                    progressContainer.style.display = "none";
                 }
-            } catch (err) {
-                console.error("Upload error:", err);
+            });
+
+            xhr.addEventListener("error", function() {
                 alert("An error occurred during upload.");
-            }
+                progressContainer.style.display = "none";
+            });
+
+            xhr.open("POST", "/api/admin/upload-pdf", true);
+            xhr.setRequestHeader("Authorization", "Bearer " + token);
+            xhr.send(formData);
         }
 
         async function deletePDF(pdfId) {
