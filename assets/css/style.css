@@ -73,18 +73,16 @@ body::before {
 /* ==========================================
    Header Component Styles
    ========================================== */
-
 .site-header {
-    background: rgba(7, 21, 47, 0.8);
+    background: rgba(7, 21, 47, 0.85);
     border-bottom: 1px solid var(--glass-border);
-    position: fixed !important;
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     z-index: 1000;
     box-shadow: 0 12px 34px var(--shadow-deep);
     backdrop-filter: blur(18px) saturate(130%);
-    position: -webkit-sticky !important;
 }
 
 .nav-container {
@@ -94,6 +92,10 @@ body::before {
     min-height: 76px;
     height: auto;
     gap: 18px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    box-sizing: border-box;
 }
 
 .brand-logo {
@@ -161,9 +163,11 @@ body::before {
     display: none;
     background: none;
     border: none;
-    font-size: 1.5rem;
+    font-size: 1.8rem;
     cursor: pointer;
-    color: #ffffff;
+    color: var(--gold-bright);
+    padding: 4px 8px;
+    z-index: 1001;
 }
 
 .nav-search {
@@ -175,6 +179,7 @@ body::before {
     border: 1px solid var(--glass-border);
     border-radius: 6px;
     background: rgba(255, 255, 255, 0.06);
+    box-sizing: border-box;
 }
 
 .nav-search input {
@@ -203,6 +208,7 @@ body::before {
     font: 1.15rem Georgia, serif;
     cursor: pointer;
     transition: background var(--ease-smooth), transform var(--ease-smooth);
+    flex-shrink: 0;
 }
 
 .nav-search button:hover {
@@ -210,6 +216,64 @@ body::before {
     transform: scale(1.04);
 }
 
+@media (max-width: 768px) {
+    .menu-toggle {
+        display: block !important;
+    }
+
+    .nav-links {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background: rgba(7, 21, 47, 0.98);
+        backdrop-filter: blur(18px);
+        padding: 20px;
+        box-shadow: 0 16px 30px rgba(1, 8, 23, 0.4);
+        border-bottom: 1px solid var(--glass-border);
+        align-items: stretch;
+        gap: 12px;
+        box-sizing: border-box;
+    }
+
+    .nav-links.active {
+        display: flex !important;
+    }
+
+    .nav-link {
+        width: 100%;
+        padding: 10px 12px;
+        box-sizing: border-box;
+    }
+
+    .nav-search {
+        width: 100% !important;
+        margin: 0;
+        display: flex;
+    }
+
+    .nav-search input {
+        flex: 1;
+    }
+
+    #auth-nav {
+        width: 100%;
+        display: flex;
+        gap: 10px;
+        margin: 0;
+    }
+
+    #auth-nav a,
+    #auth-nav .auth-btn-login,
+    #auth-nav .auth-btn-signup {
+        flex: 1;
+        text-align: center;
+        justify-content: center;
+        box-sizing: border-box;
+    }
+}
 /* ==========================================
    Main Content Layout
    ========================================== */
