@@ -1,6 +1,6 @@
 import os
 from datetime import datetime, timedelta
-from typing import Optional, List, Union
+from typing import Optional, List, Union, Any
 from fastapi import FastAPI, HTTPException, status, Form, UploadFile, File, Depends
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, Response
@@ -9,13 +9,11 @@ from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
 from jose import JWTError, jwt
 from bson import ObjectId
-import cloudinary
-import cloudinary.uploader
-from cloudinary.utils import private_download_url
+from supabase import create_client, Client
 from urllib.request import urlopen
 
-from .database import test_db_connection, user_collection, pdf_collection, discussion_collection, faq_collection
-from .schemas import UserCreate, UserResponse, PDFResponse, DiscussionCreate, DiscussionResponse, UserLogin, Token, PasswordReset, FAQCreate, FAQResponse
+from database import test_db_connection, user_collection, pdf_collection, discussion_collection, faq_collection
+from schemas import UserCreate, UserResponse, PDFResponse, DiscussionCreate, DiscussionResponse, UserLogin, Token, PasswordReset, FAQCreate, FAQResponse
 
 app = FastAPI(title="طريق الهدى API")
 
@@ -36,12 +34,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Cloudinary Configuration
-cloudinary.config(
-    cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME"),
-    api_key=os.getenv("CLOUDINARY_API_KEY"),
-    api_secret=os.getenv("CLOUDINARY_API_SECRET")
-)
+# Supabase Configuration
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+SUPABASE_BUCKET = os.getenv("SUPABASE_BUCKET", "tariq_al_huda_pdfs")
+
+if not SUPABASE_URL or not SUPABASE_KEY:
+    raise ValueError("SUPABASE_URL and SUPABASE_KEY must be set in environment variables.")
+
+supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 # JWT & Security Configuration
 SECRET_KEY = os.getenv("SECRET_KEY", "your_super_secret_fallback_key_here")
@@ -62,17 +63,17 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 def get_pdf_delivery_url(document: Optional[dict]) -> str:
     if not document:
         return ""
-    public_id = document.get("public_id")
-    if not public_id:
+    file_path = document.get("file_path") or document.get("public_id")
+    if not file_path:
         return document.get("cloudinary_url", "")
-
-    return private_download_url(
-        public_id,
-        format="pdf",
-        resource_type=document.get("resource_type", "image"),
-        type="upload",
-        attachment=False
-    )
+    
+    try:
+        res = supabase.storage.from_(SUPABASE_BUCKET).get_public_url(file_path)
+        if isinstance(res, dict):
+            return str(res.get("publicUrl") or res.get("public_url") or "")
+        return str(res)
+    except Exception:
+        return document.get("cloudinary_url", "")
 
 def normalize_pdf_id(pdf_id: str) -> Union[ObjectId, int]:
     if pdf_id.isdigit():
@@ -96,8 +97,8 @@ def serialize_pdf(document: Optional[dict]) -> dict:
         "title": document.get("title", ""),
         "description": document.get("description", ""),
         "upload_date": document.get("upload_date", ""),
-        "cloudinary_url": get_pdf_delivery_url(document),
-        "public_id": document.get("public_id"),
+        "cloudinary_url": get_pdf_delivery_url(document),  # Maintained for frontend compatibility
+        "public_id": document.get("file_path") or document.get("public_id"),
         "file_name": document.get("file_name"),
         "sort_order": document.get("sort_order", 0)
     }
@@ -299,7 +300,7 @@ async def reset_password(data: PasswordReset):
 
 
 # ==========================================
-# 2. PDF Document & Cloudinary Routes
+# 2. PDF Document & Supabase Routes
 # ==========================================
 @app.get("/api/pdfs", response_model=List[PDFResponse])
 async def get_all_pdfs():
@@ -427,8 +428,8 @@ async def get_pdf_file(pdf_id: str):
         raise HTTPException(status_code=404, detail="PDF note not found.")
 
     try:
-        with urlopen(get_pdf_delivery_url(document)) as cloudinary_file:
-            contents = cloudinary_file.read()
+        with urlopen(get_pdf_delivery_url(document)) as file_obj:
+            contents = file_obj.read()
     except Exception as error:
         raise HTTPException(status_code=502, detail=f"Unable to load PDF file: {error}")
 
@@ -453,47 +454,51 @@ async def upload_pdf(
 
     try:
         contents = await file.read()
-        upload_result = cloudinary.uploader.upload(
-            contents,
-            resource_type="image",
-            folder="tariq_al_huda_pdfs",
-            filename_override=os.path.basename(file.filename)
+        file_name = f"{int(datetime.utcnow().timestamp())}_{os.path.basename(file.filename)}"
+        file_path = f"documents/{file_name}"
+
+        # Upload file bytes to Supabase Storage
+        supabase.storage.from_(SUPABASE_BUCKET).upload(
+            path=file_path,
+            file=contents,
+            file_options={"content-type": "application/pdf"}
         )
-        
-        secure_url = upload_result.get("secure_url")
-        public_id = upload_result.get("public_id")
+
+        public_url_res = supabase.storage.from_(SUPABASE_BUCKET).get_public_url(file_path)
+        secure_url = str(public_url_res.get("publicUrl") if isinstance(public_url_res, dict) else public_url_res or "")
+
         current_date = datetime.utcnow().strftime("%Y-%m-%d")
 
         next_document_id = await pdf_collection.count_documents({"document_id": {"$exists": True}}) + 1
         while await pdf_collection.find_one({"document_id": next_document_id}):
             next_document_id += 1
+
         pdf_doc = {
             "document_id": next_document_id,
             "title": title,
             "description": description,
             "upload_date": current_date,
             "cloudinary_url": secure_url,
-            "public_id": public_id,
+            "file_path": file_path,
             "file_name": os.path.basename(file.filename),
-            "resource_type": "image",
             "sort_order": await pdf_collection.count_documents({})
         }
 
-        result = await pdf_collection.insert_one(pdf_doc)
+        await pdf_collection.insert_one(pdf_doc)
 
         return {
             "id": str(next_document_id),
             "title": title,
             "description": description,
             "upload_date": current_date,
-            "cloudinary_url": get_pdf_delivery_url(pdf_doc),
-            "public_id": public_id,
-            "file_name": os.path.basename(file.filename)
+            "cloudinary_url": secure_url,
+            "file_name": os.path.basename(file.filename),
+            "sort_order": pdf_doc["sort_order"]
         }
     except HTTPException as he:
         raise he
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Cloudinary upload failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Supabase upload failed: {str(e)}")
 
 
 @app.delete("/api/admin/pdfs/{pdf_id}")
@@ -505,12 +510,12 @@ async def delete_pdf(
     if not document:
         raise HTTPException(status_code=404, detail="PDF note not found.")
 
-    public_id = document.get("public_id")
-    if public_id:
+    file_path = document.get("file_path") or document.get("public_id")
+    if file_path:
         try:
-            cloudinary.uploader.destroy(public_id)
+            supabase.storage.from_(SUPABASE_BUCKET).remove([file_path])
         except Exception as e:
-            print(f"Cloudinary deletion warning: {e}")
+            print(f"Supabase deletion warning: {e}")
 
     result = await pdf_collection.delete_one(pdf_query_id(pdf_id))
     if result.deleted_count == 0:
@@ -541,26 +546,33 @@ async def update_pdf(
     if not document:
         raise HTTPException(status_code=404, detail="PDF note not found.")
 
-    updates = {"title": title.strip(), "description": description.strip()}
+    updates: dict[str, Any] = {"title": title.strip(), "description": description.strip()}
     if file and file.filename:
         if not file.filename.lower().endswith(".pdf"):
             raise HTTPException(status_code=400, detail="Only PDF files are allowed.")
         contents = await file.read()
-        upload_result = cloudinary.uploader.upload(
-            contents,
-            resource_type="image",
-            folder="tariq_al_huda_pdfs",
-            filename_override=os.path.basename(file.filename)
+        file_name = f"{int(datetime.utcnow().timestamp())}_{os.path.basename(file.filename)}"
+        file_path = f"documents/{file_name}"
+        
+        supabase.storage.from_(SUPABASE_BUCKET).upload(
+            path=file_path,
+            file=contents,
+            file_options={"content-type": "application/pdf"}
         )
-        old_public_id = document.get("public_id")
-        if old_public_id:
-            cloudinary.uploader.destroy(old_public_id)
-        updates.update({
-            "cloudinary_url": upload_result.get("secure_url"),
-            "public_id": upload_result.get("public_id"),
-            "file_name": os.path.basename(file.filename),
-            "resource_type": "image"
-        })
+        
+        public_url_res = supabase.storage.from_(SUPABASE_BUCKET).get_public_url(file_path)
+        secure_url = str(public_url_res.get("publicUrl") if isinstance(public_url_res, dict) else public_url_res or "")
+
+        old_file_path = document.get("file_path") or document.get("public_id")
+        if old_file_path:
+            try:
+                supabase.storage.from_(SUPABASE_BUCKET).remove([old_file_path])
+            except Exception as e:
+                print(f"Supabase old file removal warning: {e}")
+
+        updates["cloudinary_url"] = secure_url
+        updates["file_path"] = file_path
+        updates["file_name"] = os.path.basename(file.filename)
 
     await pdf_collection.update_one(pdf_query_id(pdf_id), {"$set": updates})
     updated = await pdf_collection.find_one(pdf_query_id(pdf_id))
